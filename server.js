@@ -1,6 +1,11 @@
 const puppeteer = require('puppeteer');
 const express = require('express');
+const cors = require('cors');
 const app = express();
+
+app.use(cors({
+  origin: '*'
+}));
 
 app.get('/api', async (req, res) => {
 
@@ -47,11 +52,13 @@ app.get('/api', async (req, res) => {
     try {var address = await page.$eval(QY_SLCT_ADRESS, (el) => el.textContent)} catch (e) {var addres = ''}
     try {var phone = await page.$eval(QY_SLCT_PHONE, (el) => el.textContent)} catch (e) {var addres = ''}
 
-    await data.push({
-      'name':name,
-      'addres':address,
-      'phone':phone.replace(/[^\d]/g, '')
-    });
+    var info = {
+      'name'  : name,
+      'addres': address,
+      'phone' : phone.replace(/[^\d]/g, '')
+    }
+
+    await data.push(info);
 
     [name, address, phone] = ['','',''];
 
@@ -78,6 +85,6 @@ const port = 4000;
 app.listen(port, () => {
   console.log(`
     Servidor iniciado!
-    Exemplo de uso: http://localhost:${port}/api?q=igrejas&limit=10
+    Exemplo de uso: http://localhost:${port}/api?q=igrejas&limit=1
   `)
 });
